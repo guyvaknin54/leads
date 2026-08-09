@@ -1,141 +1,77 @@
-<!DOCTYPE html>
-<html lang="he" dir="rtl">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="1BA5G--JU46J5wY8qul2kVbf7Ef58sRcWDGFbY8ft3wM">
-<title>LeadAI | AI Lead Intelligence</title>
-<style>
-:root{
- --bg:#f6fbfb;--bg2:#edfafa;--card:rgba(255,255,255,.88);
- --text:#17383b;--muted:#6b8588;--turq:#19c7c0;--turq2:#7ce9e3;
- --line:#d9eeee;--shadow:0 24px 70px rgba(18,92,96,.12)
-}
-*{box-sizing:border-box}html{scroll-behavior:smooth}
-body{margin:0;font-family:Segoe UI,Arial,sans-serif;color:var(--text);
- background:radial-gradient(circle at 85% 8%,#dffaf8 0,transparent 28%),linear-gradient(180deg,#fbfefe,#edf7f7);
- overflow-x:hidden}
-body:before{content:"";position:fixed;inset:0;pointer-events:none;opacity:.35;
- background-image:linear-gradient(rgba(25,199,192,.045) 1px,transparent 1px),linear-gradient(90deg,rgba(25,199,192,.045) 1px,transparent 1px);
- background-size:42px 42px}
-.container{width:min(1180px,calc(100% - 36px));margin:auto}
-nav{position:sticky;top:0;z-index:50;background:rgba(250,254,254,.78);backdrop-filter:blur(18px);border-bottom:1px solid var(--line)}
-.nav{height:72px;display:flex;align-items:center;justify-content:space-between}.logo{font-size:23px;font-weight:900}.logo span{color:var(--turq)}
-.nav a{margin:0 12px;text-decoration:none;color:var(--muted);font-weight:700}.nav a:hover{color:var(--turq)}
-.btn{border:0;background:linear-gradient(135deg,var(--turq),#0eb0aa);color:#fff;padding:14px 22px;border-radius:12px;font-weight:800;cursor:pointer;box-shadow:0 10px 25px rgba(25,199,192,.22);transition:.2s}
-.btn:hover{transform:translateY(-2px);box-shadow:0 14px 32px rgba(25,199,192,.3)}
-.btn.ghost{background:#fff;color:var(--text);border:1px solid var(--line);box-shadow:none}
-.hero{display:grid;grid-template-columns:1.05fr .95fr;gap:65px;align-items:center;padding:85px 0 65px}
-.pill{display:inline-flex;padding:8px 14px;border-radius:99px;background:#e7fbfa;color:#078c87;font-weight:800}
-h1{font-size:clamp(43px,6vw,72px);line-height:1;margin:20px 0}.accent{color:var(--turq)}
-.hero p{font-size:20px;line-height:1.75;color:var(--muted);max-width:620px}
-.actions{display:flex;gap:12px;flex-wrap:wrap;margin-top:28px}
-.visual{position:relative}.glow{position:absolute;inset:-40px;background:#8cece7;filter:blur(70px);opacity:.18}
-.dashboard{position:relative;background:rgba(255,255,255,.74);border:1px solid #d5eeee;border-radius:26px;padding:18px;box-shadow:var(--shadow);backdrop-filter:blur(12px)}
-.screen{background:linear-gradient(145deg,#123d40,#1b5558);border-radius:19px;padding:20px;color:#fff;min-height:360px}
-.screen-head{display:flex;justify-content:space-between}.live{color:#8ff4ed}.dot{display:inline-block;width:8px;height:8px;border-radius:50%;background:var(--turq2);box-shadow:0 0 12px var(--turq2)}
-.kpis{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin:20px 0}.kpi{background:#1c494c;padding:14px;border-radius:12px}.kpi small{color:#a8c5c7}.kpi b{display:block;font-size:25px;margin-top:5px}
-.chart{height:150px;display:flex;align-items:end;gap:9px;padding:15px 5px}.chart i{flex:1;background:linear-gradient(var(--turq2),var(--turq));border-radius:8px 8px 2px 2px;box-shadow:0 0 18px rgba(124,233,227,.12)}
-section{padding:70px 0}.title{text-align:center;margin-bottom:32px}.title h2{font-size:37px;margin:0 0 9px}.title p{color:var(--muted)}
-.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:18px}.card{background:var(--card);border:1px solid var(--line);border-radius:20px;padding:24px;box-shadow:0 12px 35px rgba(24,95,98,.06);backdrop-filter:blur(10px)}.card p{color:var(--muted);line-height:1.65}.icon{font-size:30px}
-.sim{display:grid;grid-template-columns:.75fr 1.25fr;gap:20px}.control{margin:18px 0}.control label{display:flex;justify-content:space-between;font-weight:800;margin-bottom:8px}.range{width:100%;accent-color:var(--turq)}
-select,.text{width:100%;padding:13px;border:1px solid var(--line);border-radius:11px;background:#fff;color:var(--text);outline:none}.text{margin:7px 0 14px}
-.result{background:linear-gradient(145deg,#103a3d,#194f52);border-radius:22px;padding:28px;color:white;box-shadow:var(--shadow)}.score{font-size:80px;font-weight:900;color:var(--turq2);line-height:1}.meter{height:13px;background:#2a5b5e;border-radius:99px;overflow:hidden}.meter i{display:block;height:100%;background:linear-gradient(90deg,#75e9e3,#19c7c0);width:0;transition:.4s}
-.rgrid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:20px}.rbox{background:#1b494c;padding:15px;border-radius:12px}.rbox small{color:#a8c5c7}.rbox b{display:block;font-size:20px;margin-top:5px}.notify{margin-top:18px;background:#e9fbfa;color:#087f7a;border-right:4px solid var(--turq);padding:14px;border-radius:10px}
-.timeline{display:grid;gap:12px}.step{display:flex;gap:14px;align-items:flex-start}.num{min-width:36px;height:36px;border-radius:50%;background:#e6faf8;color:#078c87;display:grid;place-items:center;font-weight:900}
-.form{max-width:620px;margin:auto}.row{display:grid;grid-template-columns:1fr 1fr;gap:12px}.success{display:none;margin-top:12px;padding:14px;border-radius:11px;background:#e9fbfa;color:#078c87;font-weight:800}
-footer{text-align:center;padding:35px;color:#789093;border-top:1px solid var(--line)}
-@media(max-width:800px){.hero,.sim{grid-template-columns:1fr}.navlinks{display:none}.row{grid-template-columns:1fr}.rgrid{grid-template-columns:1fr 1fr}.hero{padding-top:50px}}
-</style>
-</head>
-<body>
-
-<nav><div class="container nav">
- <div class="logo">Lead<span>AI</span></div>
- <div class="navlinks"><a href="#features">יכולות</a><a href="#game">סימולטור</a><a href="#flow">אוטומציה</a><a href="#join">בטא</a></div>
- <button class="btn" onclick="go('game')">נסו את הדמו</button>
-</div></nav>
-
-<header class="container hero">
- <div>
-  <span class="pill">✦ AI Lead Intelligence</span>
-  <h1>הופכים כל ליד ל־<span class="accent">הזדמנות.</span></h1>
-  <p>מערכת AI שמנתחת לידים בזמן אמת, מדרגת את פוטנציאל המכירה ומפעילה את הפעולה הנכונה בדיוק כשהלקוח מוכן.</p>
-  <div class="actions"><button class="btn" onclick="go('game')">🎮 שחקו עם המערכת</button><button class="btn ghost" onclick="go('join')">הצטרפות לבטא</button></div>
- </div>
- <div class="visual"><div class="glow"></div><div class="dashboard"><div class="screen">
-  <div class="screen-head"><b>Lead Intelligence</b><span class="live"><i class="dot"></i> LIVE</span></div>
-  <div class="kpis"><div class="kpi"><small>לידים</small><b>248</b></div><div class="kpi"><small>חמים</small><b>37</b></div><div class="kpi"><small>המרה</small><b>18.6%</b></div></div>
-  <small>Lead Quality — Live Monitor</small><div class="chart">
-   <i style="height:35%"></i><i style="height:50%"></i><i style="height:43%"></i><i style="height:68%"></i><i style="height:59%"></i><i style="height:86%"></i><i style="height:74%"></i><i style="height:96%"></i>
-  </div>
- </div></div></div>
-</header>
-
-<section id="features"><div class="container"><div class="title"><h2>מערכת שנראית ומרגישה כמו מוצר SaaS אמיתי</h2><p>לא רק דף נחיתה — חוויה אינטראקטיבית שמדגימה את הערך.</p></div>
-<div class="grid">
- <div class="card"><div class="icon">🎯</div><h3>AI Lead Scoring</h3><p>ציון חכם לכל ליד לפי מעורבות, כוונת רכישה, מקור והתנהגות.</p></div>
- <div class="card"><div class="icon">⚡</div><h3>Real-Time Alerts</h3><p>התראות בזמן אמת כשהמערכת מזהה הזדמנות שדורשת טיפול.</p></div>
- <div class="card"><div class="icon">🤖</div><h3>Smart Automation</h3><p>הפעלת הודעות, משימות ומעקבים אוטומטיים לפי תנאים.</p></div>
- <div class="card"><div class="icon">📊</div><h3>Insights</h3><p>הבנה מהירה של איכות הלידים, המרות ומקורות שמייצרים תוצאות.</p></div>
-</div></div></section>
-
-<section id="game"><div class="container"><div class="title"><h2>🎮 משחק מנהל המכירות</h2><p>שנה את הנתונים, נתח את הליד וקבל החלטה. כל שינוי משפיע על התוצאה.</p></div>
-<div class="sim">
- <div class="card">
-  <h3>Lead Parameters</h3>
-  <div class="control"><label>מעורבות באתר <span id="ev">72</span></label><input id="eng" class="range" type="range" min="0" max="100" value="72" oninput="calc()"></div>
-  <div class="control"><label>כוונת רכישה <span id="iv">84</span></label><input id="intent" class="range" type="range" min="0" max="100" value="84" oninput="calc()"></div>
-  <div class="control"><label>דחיפות <span id="uv">65</span></label><input id="urg" class="range" type="range" min="0" max="100" value="65" oninput="calc()"></div>
-  <div class="control"><label>מקור ליד</label><select id="source" onchange="calc()"><option value="1.05">קמפיין ממומן</option><option value="1.12">המלצה</option><option value=".96">טופס אתר</option><option value=".88">מקור לא ידוע</option></select></div>
-  <button class="btn" style="width:100%" onclick="randomLead()">🎲 צור ליד חדש</button>
- </div>
- <div class="result"><small>AI LEAD SCORE</small><div class="score" id="score">82</div><div class="meter"><i id="meter"></i></div>
-  <h2 id="status">🔥 ליד חם</h2><p id="advice">מומלץ ליצור קשר בתוך 5 דקות.</p>
-  <div class="rgrid"><div class="rbox"><small>סיכוי לסגירה</small><b id="close">76%</b></div><div class="rbox"><small>עדיפות</small><b id="priority">גבוהה</b></div><div class="rbox"><small>פעולה</small><b id="action">שיחה</b></div></div>
-  <div class="notify" id="notify">⚡ ליד חם חדש התקבל — המערכת ממליצה על שיחה מיידית.</div>
- </div>
-</div></div></section>
-
-<section id="flow"><div class="container"><div class="title"><h2>⚙️ איך המערכת עובדת?</h2><p>דמו של תהליך Lead-to-Action.</p></div>
-<div class="timeline">
- <div class="card step"><div class="num">1</div><div><b>ליד נכנס</b><p>לקוח משאיר פרטים או מתחיל תהליך באתר.</p></div></div>
- <div class="card step"><div class="num">2</div><div><b>AI מנתח</b><p>המערכת מחשבת ציון ומזהה את רמת הכוונה.</p></div></div>
- <div class="card step"><div class="num">3</div><div><b>פעולה מופעלת</b><p>התראה, WhatsApp, משימה או מסלול אוטומטי.</p></div></div>
- <div class="card step"><div class="num">4</div><div><b>למידה ומעקב</b><p>המערכת ממשיכה לעקוב אחר התנהגות הליד.</p></div></div>
-</div></div></section>
-
-<section id="join"><div class="container"><div class="title"><h2>הצטרפו לרשימת ההמתנה</h2><p>קבלו גישה מוקדמת לגרסת הבטא.</p></div>
-<div class="card form"><form id="waitlistForm">
- <div class="row"><div><label>שם מלא</label><input id="name" class="text" placeholder="שם מלא"></div><div><label>כתובת דוא״ל</label><input id="email" class="text" type="email" placeholder="you@example.com"></div></div>
- <button class="btn" type="submit" style="width:100%">הצטרפות לרשימת ההמתנה</button>
-</form><div id="statusMessage" class="success"></div></div></div></section>
-
-<footer>© 2026 LeadAI · AI Lead Intelligence · תנאי שימוש · מדיניות פרטיות</footer>
-
 <script>
+
 function go(id){document.getElementById(id).scrollIntoView({behavior:'smooth'})}
+
 function calc(){
- const e=+eng.value,i=+intent.value,u=+urg.value,m=+source.value;
- ev.textContent=e;iv.textContent=i;uv.textContent=u;
- const s=Math.round(Math.min(100,(e*.35+i*.45+u*.20)*m));
- score.textContent=s;meter.style.width=s+'%';
- let st,ad,pr,ac,msg;
- if(s>=80){st='🔥 ליד חם';ad='מומלץ ליצור קשר בתוך 5 דקות.';pr='גבוהה';ac='שיחה';msg='⚡ ליד חם חדש התקבל — המערכת ממליצה על שיחה מיידית.'}
- else if(s>=55){st='🟡 ליד פושר';ad='שלח הודעת המשך ותזמן מעקב.';pr='בינונית';ac='WhatsApp';msg='💬 הליד עדיין פעיל — מומלץ לבצע Follow-up.'}
- else{st='🔵 ליד קר';ad='העבר את הליד למסלול nurturing אוטומטי.';pr='נמוכה';ac='Automation';msg='🤖 הליד לא בשל כרגע — הופעל מסלול nurturing.'}
- status.textContent=st;advice.textContent=ad;priority.textContent=pr;action.textContent=ac;notify.textContent=msg;close.textContent=Math.round(s*.82)+'%';
+const e=+eng.value,i=+intent.value,u=+urg.value,m=+source.value;
+ev.textContent=e;iv.textContent=i;uv.textContent=u;
+const s=Math.round(Math.min(100,(e*.35+i*.45+u*.20)*m));
+score.textContent=s;meter.style.width=s+'%';
+let st,ad,pr,ac,msg;
+if(s>=80){st='🔥 ליד חם';ad='מומלץ ליצור קשר בתוך 5 דקות.';pr='גבוהה';ac='שיחה';msg='⚡ ליד חם חדש התקבל — המערכת ממליצה על שיחה מיידית.'}
+else if(s>=55){st='🟡 ליד פושר';ad='שלח הודעת המשך ותזמן מעקב.';pr='בינונית';ac='WhatsApp';msg='💬 הליד עדיין פעיל — מומלץ לבצע Follow-up.'}
+else{st='🔵 ליד קר';ad='העבר את הליד למסלול nurturing אוטומטי.';pr='נמוכה';ac='Automation';msg='🤖 הליד לא בשל כרגע — הופעל מסלול nurturing.'}
+status.textContent=st;advice.textContent=ad;priority.textContent=pr;action.textContent=ac;notify.textContent=msg;close.textContent=Math.round(s*.82)+'%';
 }
+
 function randomLead(){
- eng.value=Math.floor(Math.random()*101);intent.value=Math.floor(Math.random()*101);urg.value=Math.floor(Math.random()*101);source.selectedIndex=Math.floor(Math.random()*4);calc();
+eng.value=Math.floor(Math.random()*101);intent.value=Math.floor(Math.random()*101);urg.value=Math.floor(Math.random()*101);source.selectedIndex=Math.floor(Math.random()*4);calc();
 }
-waitlistForm.addEventListener('submit',function(e){
- e.preventDefault();const n=name.value.trim(),mail=email.value.trim();
- if(!n||!mail){statusMessage.style.display='block';statusMessage.textContent='נא למלא שם מלא וכתובת דוא״ל.';return}
- if(!/^[^\\s@]+@[^\\s@]+\\.[^\\s@]+$/.test(mail)){statusMessage.style.display='block';statusMessage.textContent='נא להזין כתובת דוא״ל תקינה.';return}
- statusMessage.style.display='block';statusMessage.textContent='✓ תודה! ההרשמה נקלטה בהצלחה בדמו.';
- this.reset();
-});
+
 calc();
+
+
+// ⭐⭐⭐ כאן הוספתי את קוד ה־API שלך ⭐⭐⭐
+
+waitlistForm.addEventListener('submit', async function(e) {
+  e.preventDefault();
+
+  const n = name.value.trim();
+  const mail = email.value.trim();
+
+  if (!n || !mail) {
+    statusMessage.style.display = 'block';
+    statusMessage.textContent = 'נא למלא שם מלא וכתובת דוא״ל.';
+    return;
+  }
+
+  if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(mail)) {
+    statusMessage.style.display = 'block';
+    statusMessage.textContent = 'נא להזין כתובת דוא״ל תקינה.';
+    return;
+  }
+
+  // ⭐ כתובת ה־API שלך — מודבקת כמו שביקשת ⭐
+  const API_URL = "https://script.google.com/macros/s/AKfycbxhL0dbGVYJSyVqjXqZXOudNk0X-N9bip9eURGho7Ty56uKvWp_sVyXxq2XNxPOGkDL/exec";
+
+  try {
+    const res = await fetch(API_URL, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        name: n,
+        email: mail
+      })
+    });
+
+    const data = await res.json();
+
+    statusMessage.style.display = 'block';
+
+    if (data.success && data.alreadyRegistered) {
+      statusMessage.textContent = 'כתובת הדוא״ל כבר רשומה.';
+    } else if (data.success) {
+      statusMessage.textContent = '✓ תודה! ההרשמה נקלטה בהצלחה.';
+    } else {
+      statusMessage.textContent = 'שגיאה: לא ניתן לשמור את ההרשמה.';
+    }
+
+    this.reset();
+
+  } catch (err) {
+    statusMessage.style.display = 'block';
+    statusMessage.textContent = 'שגיאה בחיבור לשרת.';
+  }
+});
+
 </script>
-</body>
-</html>
