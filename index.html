@@ -29,7 +29,7 @@ document.addEventListener("DOMContentLoaded", function() {
   calc();
 
 
-  // ⭐⭐⭐ קוד שליחת הנתונים לשיט ⭐⭐⭐
+  /* ⭐⭐⭐ שליחת נתונים ל־Google Sheets ⭐⭐⭐ */
 
   const form = document.getElementById("waitlistForm");
   const statusMessage = document.getElementById("statusMessage");
@@ -58,7 +58,11 @@ document.addEventListener("DOMContentLoaded", function() {
       const res = await fetch(API_URL, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ name: n, email: mail })
+        body: JSON.stringify({
+          name: n,
+          email: mail,
+          date: new Date().toISOString()
+        })
       });
 
       const data = await res.json();
