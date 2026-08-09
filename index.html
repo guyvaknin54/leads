@@ -2,70 +2,88 @@
 <html lang="he" dir="rtl">
 <head>
     <meta charset="UTF-8">
-    <title>רשימת המתנה</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>רשימת המתנה - מערכת לידים AI</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 40px; text-align: center; background-color: #f4f7f6; }
+        .container { max-width: 500px; margin: 0 auto; background: white; padding: 30px; border-radius: 8px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); }
+        input { width: 100%; padding: 10px; margin: 10px 0; box-sizing: border-box; border: 1px solid #ccc; border-radius: 4px; }
+        button { width: 100%; padding: 12px; background-color: #28a745; color: white; border: none; border-radius: 4px; cursor: pointer; font-size: 16px; }
+        button:hover { background-color: #218838; }
+        #statusMessage { margin-top: 15px; font-weight: bold; padding: 10px; border-radius: 4px; display: none; }
+    </style>
 </head>
 <body>
 
-    <!-- טופס ההרשמה שלך (ודא שה-ID תואמים למה שיש לך בעיצוב) -->
+<div class="container">
+    <h2>הצטרפות לרשימת המתנה</h2>
+    <p>השאר פרטים ונחזור אליך בהקדם</p>
+    
     <form id="waitlistForm">
         <input type="text" id="name" placeholder="שם מלא" required>
-        <input type="email" id="email" placeholder="אימייל" required>
-        <button type="submit">הצטרפות</button>
+        <input type="email" id="email" placeholder="כתובת דוא״ל" required>
+        <button type="submit">הצטרף עכשיו</button>
     </form>
     
-    <div id="statusMessage" style="display:none;"></div>
+    <div id="statusMessage"></div>
+</div>
 
-    <script>
-    document.addEventListener("DOMContentLoaded", function() {
-      // כאן פונקציות המחשבון והלידים שלך (calc, randomLead וכדומה)...
+<script>
+document.addEventListener("DOMContentLoaded", function() {
+    const form = document.getElementById("waitlistForm");
+    const statusMessage = document.getElementById("statusMessage");
 
-      const form = document.getElementById("waitlistForm");
-      const statusMessage = document.getElementById("statusMessage");
-
-      form.addEventListener("submit", async function(e) {
+    form.addEventListener("submit", async function(e) {
         e.preventDefault();
 
         const n = document.getElementById("name").value.trim();
         const mail = document.getElementById("email").value.trim();
 
         if (!n || !mail) {
-          statusMessage.style.display = 'block';
-          statusMessage.textContent = 'נא למלא שם מלא וכתובת דוא״ל.';
-          return;
+            statusMessage.style.display = 'block';
+            statusMessage.style.color = 'red';
+            statusMessage.textContent = 'נא למלא שם מלא וכתובת דוא״ל.';
+            return;
         }
 
+        // הקישור לגוגל סקריפט שלך
         const API_URL = "https://script.google.com/macros/s/AKfycbxhL0dbGVYJSyVqjXqZXOudNk0X-N9bip9eURGho7Ty56uKvWp_sVyXxq2XNxPOGkDL/exec";
 
+        statusMessage.style.display = 'block';
+        statusMessage.style.color = '#555';
+        statusMessage.textContent = 'שומר נתונים...';
+
         try {
-          // שליחה בפורמט שעוקף שגיאות אבטחה ו-CORS בדפדפן
-          const formData = new URLSearchParams();
-          formData.append("name", n);
-          formData.append("email", mail);
+            const formData = new URLSearchParams();
+            formData.append("name", n);
+            formData.append("email", mail);
 
-          const res = await fetch(API_URL, {
-            method: "POST",
-            headers: { "Content-Type": "application/x-www-form-urlencoded" },
-            body: formData.toString()
-          });
+            const res = await fetch(API_URL, {
+                method: "POST",
+                headers: { "Content-Type": "application/x-www-form-urlencoded" },
+                body: formData.toString()
+            });
 
-          const data = await res.json();
-          statusMessage.style.display = 'block';
+            const data = await res.json();
 
-          if (data.success && data.alreadyRegistered) {
-            statusMessage.textContent = 'כתובת הדוא״ל כבר רשומה.';
-          } else if (data.success) {
-            statusMessage.textContent = '✓ תודה! ההרשמה נקלטה בהצלחה.';
-            form.reset();
-          } else {
-            statusMessage.textContent = 'שגיאה: לא ניתן לשמור את ההרשמה.';
-          }
+            if (data.success && data.alreadyRegistered) {
+                statusMessage.style.color = '#eea236';
+                statusMessage.textContent = 'כתובת הדוא״ל כבר רשומה במערכת.';
+            } else if (data.success) {
+                statusMessage.style.color = 'green';
+                statusMessage.textContent = '✓ תודה! ההרשמה נקלטה בהצלחה.';
+                form.reset();
+            } else {
+                statusMessage.style.color = 'red';
+                statusMessage.textContent = 'שגיאה: לא ניתן לשמור את ההרשמה.';
+            }
 
         } catch (err) {
-          statusMessage.style.display = 'block';
-          statusMessage.textContent = 'שגיאה בחיבור לשרת.';
+            statusMessage.style.color = 'red';
+            statusMessage.textContent = 'שגיאה בחיבור לשרת.';
         }
-      });
     });
-    </script>
+});
+</script>
 </body>
 </html>
