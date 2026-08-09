@@ -4,59 +4,142 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>רשימת המתנה - מערכת לידים AI</title>
+
     <style>
-        body { font-family: Arial, sans-serif; margin: 40px; text-align: center; background-color: #f4f7f6; }
-        .container { max-width: 500px; margin: 0 auto; background: white; padding: 30px; border-radius: 8px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); }
-        input { width: 100%; padding: 10px; margin: 10px 0; box-sizing: border-box; border: 1px solid #ccc; border-radius: 4px; }
-        button { width: 100%; padding: 12px; background-color: #28a745; color: white; border: none; border-radius: 4px; cursor: pointer; font-size: 16px; }
-        button:hover { background-color: #218838; }
-        #statusMessage { margin-top: 15px; font-weight: bold; padding: 10px; border-radius: 4px; display: none; }
+        body {
+            font-family: Arial, sans-serif;
+            margin: 40px;
+            background-color: #f4f7f6;
+            display: flex;
+            justify-content: center;
+        }
+
+        .container {
+            max-width: 480px;
+            width: 100%;
+            background: white;
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+            text-align: center;
+        }
+
+        h2 {
+            margin-bottom: 10px;
+            color: #333;
+        }
+
+        p {
+            color: #666;
+            margin-bottom: 25px;
+        }
+
+        input {
+            width: 100%;
+            padding: 12px;
+            margin: 10px 0;
+            border: 1px solid #ccc;
+            border-radius: 6px;
+            font-size: 15px;
+            transition: border-color .2s;
+        }
+
+        input:focus {
+            border-color: #28a745;
+            outline: none;
+        }
+
+        button {
+            width: 100%;
+            padding: 14px;
+            background-color: #28a745;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 17px;
+            transition: background-color .2s;
+        }
+
+        button:hover {
+            background-color: #218838;
+        }
+
+        button:disabled {
+            background-color: #9cc9a7;
+            cursor: not-allowed;
+        }
+
+        #statusMessage {
+            margin-top: 20px;
+            font-weight: bold;
+            padding: 12px;
+            border-radius: 6px;
+            display: none;
+        }
+
+        .loading {
+            animation: blink 1.2s infinite;
+        }
+
+        @keyframes blink {
+            0% { opacity: 0.4; }
+            50% { opacity: 1; }
+            100% { opacity: 0.4; }
+        }
     </style>
 </head>
-<body>
 
+<body>
 <div class="container">
     <h2>הצטרפות לרשימת המתנה</h2>
     <p>השאר פרטים ונחזור אליך בהקדם</p>
-    
+
     <form id="waitlistForm">
         <input type="text" id="name" placeholder="שם מלא" required>
         <input type="email" id="email" placeholder="כתובת דוא״ל" required>
-        <button type="submit">הצטרף עכשיו</button>
+        <button type="submit" id="submitBtn">הצטרף עכשיו</button>
     </form>
-    
+
     <div id="statusMessage"></div>
 </div>
 
 <script>
-document.addEventListener("DOMContentLoaded", function() {
+document.addEventListener("DOMContentLoaded", () => {
     const form = document.getElementById("waitlistForm");
     const statusMessage = document.getElementById("statusMessage");
+    const submitBtn = document.getElementById("submitBtn");
 
-    form.addEventListener("submit", async function(e) {
+    const API_URL = "https://script.google.com/macros/s/AKfycbxhL0dbGVYJSyVqjXqZXOudNk0X-N9bip9eURGho7Ty56uKvWp_sVyXxq2XNxPOGkDL/exec";
+
+    form.addEventListener("submit", async (e) => {
         e.preventDefault();
 
-        const n = document.getElementById("name").value.trim();
-        const mail = document.getElementById("email").value.trim();
+        const name = document.getElementById("name").value.trim();
+        const email = document.getElementById("email").value.trim();
 
-        if (!n || !mail) {
-            statusMessage.style.display = 'block';
-            statusMessage.style.color = 'red';
-            statusMessage.textContent = 'נא למלא שם מלא וכתובת דוא״ל.';
+        // ולידציה בסיסית
+        if (!name || !email) {
+            showMessage("נא למלא שם מלא וכתובת דוא״ל.", "red");
             return;
         }
 
-        // הקישור לגוגל סקריפט שלך
-        const API_URL = "https://script.google.com/macros/s/AKfycbxhL0dbGVYJSyVqjXqZXOudNk0X-N9bip9eURGho7Ty56uKvWp_sVyXxq2XNxPOGkDL/exec";
+        // ולידציה לדוא״ל
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        if (!emailRegex.test(email)) {
+            showMessage("כתובת הדוא״ל אינה תקינה.", "red");
+            return;
+        }
 
-        statusMessage.style.display = 'block';
-        statusMessage.style.color = '#555';
-        statusMessage.textContent = 'שומר נתונים...';
+        // חסימת שליחה כפולה
+        submitBtn.disabled = true;
+        submitBtn.textContent = "שולח...";
+        showMessage("שומר נתונים...", "#555", true);
 
         try {
             const formData = new URLSearchParams();
-            formData.append("name", n);
-            formData.append("email", mail);
+            formData.append("name", name);
+            formData.append("email", email);
 
             const res = await fetch(API_URL, {
                 method: "POST",
@@ -64,25 +147,41 @@ document.addEventListener("DOMContentLoaded", function() {
                 body: formData.toString()
             });
 
+            if (!res.ok) {
+                throw new Error("Server error: " + res.status);
+            }
+
             const data = await res.json();
 
             if (data.success && data.alreadyRegistered) {
-                statusMessage.style.color = '#eea236';
-                statusMessage.textContent = 'כתובת הדוא״ל כבר רשומה במערכת.';
+                showMessage("כתובת הדוא״ל כבר רשומה במערכת.", "#eea236");
             } else if (data.success) {
-                statusMessage.style.color = 'green';
-                statusMessage.textContent = '✓ תודה! ההרשמה נקלטה בהצלחה.';
+                showMessage("✓ תודה! ההרשמה נקלטה בהצלחה.", "green");
                 form.reset();
             } else {
-                statusMessage.style.color = 'red';
-                statusMessage.textContent = 'שגיאה: לא ניתן לשמור את ההרשמה.';
+                showMessage("שגיאה: לא ניתן לשמור את ההרשמה.", "red");
             }
 
         } catch (err) {
-            statusMessage.style.color = 'red';
-            statusMessage.textContent = 'שגיאה בחיבור לשרת.';
+            showMessage("שגיאה בחיבור לשרת.", "red");
         }
+
+        submitBtn.disabled = false;
+        submitBtn.textContent = "הצטרף עכשיו";
     });
+
+    function showMessage(text, color, loading = false) {
+        statusMessage.style.display = "block";
+        statusMessage.textContent = text;
+        statusMessage.style.background = "#fff";
+        statusMessage.style.color = color;
+
+        if (loading) {
+            statusMessage.classList.add("loading");
+        } else {
+            statusMessage.classList.remove("loading");
+        }
+    }
 });
 </script>
 </body>
