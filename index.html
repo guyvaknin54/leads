@@ -1,77 +1,86 @@
 <script>
 
-function go(id){document.getElementById(id).scrollIntoView({behavior:'smooth'})}
+document.addEventListener("DOMContentLoaded", function() {
 
-function calc(){
-const e=+eng.value,i=+intent.value,u=+urg.value,m=+source.value;
-ev.textContent=e;iv.textContent=i;uv.textContent=u;
-const s=Math.round(Math.min(100,(e*.35+i*.45+u*.20)*m));
-score.textContent=s;meter.style.width=s+'%';
-let st,ad,pr,ac,msg;
-if(s>=80){st='🔥 ליד חם';ad='מומלץ ליצור קשר בתוך 5 דקות.';pr='גבוהה';ac='שיחה';msg='⚡ ליד חם חדש התקבל — המערכת ממליצה על שיחה מיידית.'}
-else if(s>=55){st='🟡 ליד פושר';ad='שלח הודעת המשך ותזמן מעקב.';pr='בינונית';ac='WhatsApp';msg='💬 הליד עדיין פעיל — מומלץ לבצע Follow-up.'}
-else{st='🔵 ליד קר';ad='העבר את הליד למסלול nurturing אוטומטי.';pr='נמוכה';ac='Automation';msg='🤖 הליד לא בשל כרגע — הופעל מסלול nurturing.'}
-status.textContent=st;advice.textContent=ad;priority.textContent=pr;action.textContent=ac;notify.textContent=msg;close.textContent=Math.round(s*.82)+'%';
-}
-
-function randomLead(){
-eng.value=Math.floor(Math.random()*101);intent.value=Math.floor(Math.random()*101);urg.value=Math.floor(Math.random()*101);source.selectedIndex=Math.floor(Math.random()*4);calc();
-}
-
-calc();
-
-
-// ⭐⭐⭐ כאן הוספתי את קוד ה־API שלך ⭐⭐⭐
-
-waitlistForm.addEventListener('submit', async function(e) {
-  e.preventDefault();
-
-  const n = name.value.trim();
-  const mail = email.value.trim();
-
-  if (!n || !mail) {
-    statusMessage.style.display = 'block';
-    statusMessage.textContent = 'נא למלא שם מלא וכתובת דוא״ל.';
-    return;
+  function go(id){
+    document.getElementById(id).scrollIntoView({behavior:'smooth'});
   }
 
-  if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(mail)) {
-    statusMessage.style.display = 'block';
-    statusMessage.textContent = 'נא להזין כתובת דוא״ל תקינה.';
-    return;
+  function calc(){
+    const e=+eng.value,i=+intent.value,u=+urg.value,m=+source.value;
+    ev.textContent=e;iv.textContent=i;uv.textContent=u;
+    const s=Math.round(Math.min(100,(e*.35+i*.45+u*.20)*m));
+    score.textContent=s;meter.style.width=s+'%';
+    let st,ad,pr,ac,msg;
+    if(s>=80){st='🔥 ליד חם';ad='מומלץ ליצור קשר בתוך 5 דקות.';pr='גבוהה';ac='שיחה';msg='⚡ ליד חם חדש התקבל — המערכת ממליצה על שיחה מיידית.'}
+    else if(s>=55){st='🟡 ליד פושר';ad='שלח הודעת המשך ותזמן מעקב.';pr='בינונית';ac='WhatsApp';msg='💬 הליד עדיין פעיל — מומלץ לבצע Follow-up.'}
+    else{st='🔵 ליד קר';ad='העבר את הליד למסלול nurturing אוטומטי.';pr='נמוכה';ac='Automation';msg='🤖 הליד לא בשל כרגע — הופעל מסלול nurturing.'}
+    status.textContent=st;advice.textContent=ad;priority.textContent=pr;action.textContent=ac;notify.textContent=msg;close.textContent=Math.round(s*.82)+'%';
   }
 
-  // ⭐ כתובת ה־API שלך — מודבקת כמו שביקשת ⭐
-  const API_URL = "https://script.google.com/macros/s/AKfycbxhL0dbGVYJSyVqjXqZXOudNk0X-N9bip9eURGho7Ty56uKvWp_sVyXxq2XNxPOGkDL/exec";
+  function randomLead(){
+    eng.value=Math.floor(Math.random()*101);
+    intent.value=Math.floor(Math.random()*101);
+    urg.value=Math.floor(Math.random()*101);
+    source.selectedIndex=Math.floor(Math.random()*4);
+    calc();
+  }
 
-  try {
-    const res = await fetch(API_URL, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        name: n,
-        email: mail
-      })
-    });
+  calc();
 
-    const data = await res.json();
 
-    statusMessage.style.display = 'block';
+  // ⭐⭐⭐ קוד שליחת הנתונים לשיט ⭐⭐⭐
 
-    if (data.success && data.alreadyRegistered) {
-      statusMessage.textContent = 'כתובת הדוא״ל כבר רשומה.';
-    } else if (data.success) {
-      statusMessage.textContent = '✓ תודה! ההרשמה נקלטה בהצלחה.';
-    } else {
-      statusMessage.textContent = 'שגיאה: לא ניתן לשמור את ההרשמה.';
+  const form = document.getElementById("waitlistForm");
+  const statusMessage = document.getElementById("statusMessage");
+
+  form.addEventListener("submit", async function(e) {
+    e.preventDefault();
+
+    const n = document.getElementById("name").value.trim();
+    const mail = document.getElementById("email").value.trim();
+
+    if (!n || !mail) {
+      statusMessage.style.display = 'block';
+      statusMessage.textContent = 'נא למלא שם מלא וכתובת דוא״ל.';
+      return;
     }
 
-    this.reset();
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(mail)) {
+      statusMessage.style.display = 'block';
+      statusMessage.textContent = 'נא להזין כתובת דוא״ל תקינה.';
+      return;
+    }
 
-  } catch (err) {
-    statusMessage.style.display = 'block';
-    statusMessage.textContent = 'שגיאה בחיבור לשרת.';
-  }
+    const API_URL = "https://script.google.com/macros/s/AKfycbxhL0dbGVYJSyVqjXqZXOudNk0X-N9bip9eURGho7Ty56uKvWp_sVyXxq2XNxPOGkDL/exec";
+
+    try {
+      const res = await fetch(API_URL, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ name: n, email: mail })
+      });
+
+      const data = await res.json();
+
+      statusMessage.style.display = 'block';
+
+      if (data.success && data.alreadyRegistered) {
+        statusMessage.textContent = 'כתובת הדוא״ל כבר רשומה.';
+      } else if (data.success) {
+        statusMessage.textContent = '✓ תודה! ההרשמה נקלטה בהצלחה.';
+      } else {
+        statusMessage.textContent = 'שגיאה: לא ניתן לשמור את ההרשמה.';
+      }
+
+      form.reset();
+
+    } catch (err) {
+      statusMessage.style.display = 'block';
+      statusMessage.textContent = 'שגיאה בחיבור לשרת.';
+    }
+  });
+
 });
 
 </script>
