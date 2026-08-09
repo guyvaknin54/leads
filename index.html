@@ -1,124 +1,202 @@
 <!DOCTYPE html>
 <html lang="he" dir="rtl">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>רשימת המתנה - מערכת לידים AI</title>
-
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            margin: 40px;
-            background-color: #f4f7f6;
-            display: flex;
-            justify-content: center;
-        }
-
-        .container {
-            max-width: 480px;
-            width: 100%;
-            background: white;
-            padding: 30px;
-            border-radius: 12px;
-            box-shadow: 0 4px 20px rgba(0,0,0,0.1);
-            text-align: center;
-        }
-
-        input {
-            width: 100%;
-            padding: 12px;
-            margin: 10px 0;
-            border: 1px solid #ccc;
-            border-radius: 6px;
-            font-size: 15px;
-        }
-
-        button {
-            width: 100%;
-            padding: 14px;
-            background-color: #28a745;
-            color: white;
-            border: none;
-            border-radius: 6px;
-            cursor: pointer;
-            font-size: 17px;
-        }
-
-        #statusMessage {
-            margin-top: 20px;
-            font-weight: bold;
-            padding: 12px;
-            border-radius: 6px;
-            display: none;
-        }
-    </style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>מערכת ניהול ודירוג לידים AI</title>
+  <style>
+    body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: #f0f2f5; margin: 0; padding: 20px; direction: rtl; }
+    .card { max-width: 600px; margin: 20px auto; background: #fff; padding: 25px; border-radius: 12px; box-shadow: 0 4px 20px rgba(0,0,0,0.08); }
+    h2, h3 { color: #1a202c; text-align: center; }
+    .form-group { margin-bottom: 15px; text-align: right; }
+    label { display: block; margin-bottom: 5px; font-weight: bold; color: #4a5568; }
+    input[type="text"], input[type="email"], select, input[type="range"] { width: 100%; padding: 10px; border: 1px solid #cbd5e0; border-radius: 6px; box-sizing: border-box; }
+    button { width: 100%; padding: 12px; background: #3182ce; color: white; border: none; border-radius: 6px; font-size: 16px; font-weight: bold; cursor: pointer; transition: background 0.2s; }
+    button:hover { background: #2b6cb0; }
+    .meter-bg { background: #e2e8f0; height: 12px; border-radius: 6px; overflow: hidden; margin: 10px 0; }
+    .meter-bar { background: #48bb78; height: 100%; width: 0%; transition: width 0.3s; }
+    .result-box { background: #f7fafc; padding: 15px; border-radius: 8px; border: 1px solid #e2e8f0; margin-top: 15px; }
+    #statusMessage { margin-top: 15px; padding: 10px; border-radius: 6px; text-align: center; font-weight: bold; display: none; }
+  </style>
 </head>
-
 <body>
-<div class="container">
-    <h2>הצטרפות לרשימת המתנה</h2>
-    <p>השאר פרטים ונחזור אליך בהקדם</p>
 
+  <!-- חלק מחשבון הלידים המקורי שלך -->
+  <div class="card">
+    <h2>מחשבון איכות ליד (AI Ranking)</h2>
+    
+    <div class="form-group">
+      <label>מעורבות (Engagement): <span id="ev">50</span></label>
+      <input type="range" id="eng" min="0" max="100" value="50">
+    </div>
+
+    <div class="form-group">
+      <label>כוונת רכישה (Intent): <span id="iv">50</span></label>
+      <input type="range" id="intent" min="0" max="100" value="50">
+    </div>
+
+    <div class="form-group">
+      <label>דחיפות (Urgency): <span id="uv">50</span></label>
+      <input type="range" id="urg" min="0" max="100" value="50">
+    </div>
+
+    <div class="form-group">
+      <label>מקור הליד:</label>
+      <select id="source">
+        <option value="1">פנייה ישירה (100%)</option>
+        <option value="0.85">קמפיין ממוקד (85%)</option>
+        <option value="0.7">רשתות חברתיות (70%)</option>
+        <option value="0.5">תנועה אורגנית (50%)</option>
+      </select>
+    </div>
+
+    <button type="button" id="randomBtn">הגרל ליד אקראי</button>
+
+    <div class="result-box">
+      <h3>ציון איכות: <span id="score">0</span>/100</h3>
+      <div class="meter-bg"><div id="meter" class="meter-bar"></div></div>
+      <p><strong>סטטוס:</strong> <span id="status">-</span></p>
+      <p><strong>המלצה:</strong> <span id="advice">-</span></p>
+      <p><strong>עדיפות:</strong> <span id="priority">-</span> | <strong>פעולה:</strong> <span id="action">-</span></p>
+      <p><strong>הסתברות סגירה:</strong> <span id="close">0%</span></p>
+      <p id="notify" style="color: #2b6cb0; font-weight: bold;"></p>
+    </div>
+  </div>
+
+  <!-- חלק הרשמה לרשימת המתנה -->
+  <div class="card">
+    <h2>הצטרפות לרשימת המתנה</h2>
     <form id="waitlistForm">
-        <input type="text" id="name" placeholder="שם מלא" required>
-        <input type="email" id="email" placeholder="כתובת דוא״ל" required>
-        <button type="submit" id="submitBtn">הצטרף עכשיו</button>
+      <div class="form-group">
+        <label for="name">שם מלא:</label>
+        <input type="text" id="name" placeholder="הכנס שם מלא" required>
+      </div>
+
+      <div class="form-group">
+        <label for="email">כתובת דוא״ל:</label>
+        <input type="email" id="email" placeholder="name@example.com" required>
+      </div>
+
+      <button type="submit">הירשם ל-Waitlist</button>
     </form>
 
     <div id="statusMessage"></div>
-</div>
+  </div>
 
 <script>
-document.addEventListener("DOMContentLoaded", () => {
-    const form = document.getElementById("waitlistForm");
-    const statusMessage = document.getElementById("statusMessage");
-    const submitBtn = document.getElementById("submitBtn");
+document.addEventListener("DOMContentLoaded", function() {
 
-    const API_URL = "YOUR_GOOGLE_SCRIPT_URL_HERE";
+  // לוגיקה של המחשבון
+  const eng = document.getElementById("eng");
+  const intent = document.getElementById("intent");
+  const urg = document.getElementById("urg");
+  const source = document.getElementById("source");
+  const ev = document.getElementById("ev");
+  const iv = document.getElementById("iv");
+  const uv = document.getElementById("uv");
+  const score = document.getElementById("score");
+  const meter = document.getElementById("meter");
+  const status = document.getElementById("status");
+  const advice = document.getElementById("advice");
+  const priority = document.getElementById("priority");
+  const action = document.getElementById("action");
+  const notify = document.getElementById("notify");
+  const close = document.getElementById("close");
+  const randomBtn = document.getElementById("randomBtn");
 
-    form.addEventListener("submit", async (e) => {
-        e.preventDefault();
-
-        const name = document.getElementById("name").value.trim();
-        const email = document.getElementById("email").value.trim();
-
-        if (!name || !email) {
-            return showMessage("נא למלא שם מלא וכתובת דוא״ל.", "red");
-        }
-
-        submitBtn.disabled = true;
-        showMessage("שומר נתונים...", "#555");
-
-        try {
-            const res = await fetch(API_URL, {
-                method: "POST",
-                headers: { "Content-Type": "application/x-www-form-urlencoded" },
-                body: new URLSearchParams({ name, email })
-            });
-
-            const data = await res.json();
-
-            if (data.success && data.alreadyRegistered) {
-                showMessage("כתובת הדוא״ל כבר רשומה במערכת.", "#eea236");
-            } else if (data.success) {
-                showMessage("✓ תודה! ההרשמה נקלטה בהצלחה.", "green");
-                form.reset();
-            } else {
-                showMessage("שגיאה: לא ניתן לשמור את ההרשמה.", "red");
-            }
-
-        } catch (err) {
-            showMessage("שגיאה בחיבור לשרת.", "red");
-        }
-
-        submitBtn.disabled = false;
-    });
-
-    function showMessage(text, color) {
-        statusMessage.style.display = "block";
-        statusMessage.textContent = text;
-        statusMessage.style.color = color;
+  function calc(){
+    const e = +eng.value, i = +intent.value, u = +urg.value, m = +source.value;
+    ev.textContent = e; iv.textContent = i; uv.textContent = u;
+    const s = Math.round(Math.min(100, (e*.35 + i*.45 + u*.20) * m));
+    score.textContent = s; 
+    meter.style.width = s + '%';
+    
+    let st, ad, pr, ac, msg;
+    if(s >= 80){
+      st='🔥 ליד חם'; ad='מומלץ ליצור קשר בתוך 5 דקות.'; pr='גבוהה'; ac='שיחה'; msg='⚡ ליד חם חדש התקבל — המערכת ממליצה על שיחה מיידית.';
+    } else if(s >= 55){
+      st='🟡 ליד פושר'; ad='שלח הודעת המשך ותזמן מעקב.'; pr='בינונית'; ac='WhatsApp'; msg='💬 הליד עדיין פעיל — מומלץ לבצע Follow-up.';
+    } else {
+      st='🔵 ליד קר'; ad='העבר את הליד למסלול nurturing אוטומטי.'; pr='נמוכה'; ac='Automation'; msg='🤖 הליד לא בשל כרגע — הופעל מסלול nurturing.';
     }
+    status.textContent = st; advice.textContent = ad; priority.textContent = pr; action.textContent = ac; notify.textContent = msg; close.textContent = Math.round(s*.82)+'%';
+  }
+
+  eng.addEventListener("input", calc);
+  intent.addEventListener("input", calc);
+  urg.addEventListener("input", calc);
+  source.addEventListener("change", calc);
+
+  randomBtn.addEventListener("click", function(){
+    eng.value = Math.floor(Math.random()*101);
+    intent.value = Math.floor(Math.random()*101);
+    urg.value = Math.floor(Math.random()*101);
+    source.selectedIndex = Math.floor(Math.random()*4);
+    calc();
+  });
+
+  calc();
+
+  /* שליחת נתונים ל-Google Sheets */
+  const form = document.getElementById("waitlistForm");
+  const statusMessage = document.getElementById("statusMessage");
+
+  form.addEventListener("submit", async function(e) {
+    e.preventDefault();
+
+    const n = document.getElementById("name").value.trim();
+    const mail = document.getElementById("email").value.trim();
+
+    if (!n || !mail) {
+      statusMessage.style.display = 'block';
+      statusMessage.style.background = '#fff5f5';
+      statusMessage.style.color = '#c53030';
+      statusMessage.textContent = 'נא למלא שם מלא וכתובת דוא״ל.';
+      return;
+    }
+
+    const API_URL = "https://script.google.com/macros/s/AKfycbxhL0dbGVYJSyVqjXqZXOudNk0X-N9bip9eURGho7Ty56uKvWp_sVyXxq2XNxPOGkDL/exec";
+
+    statusMessage.style.display = 'block';
+    statusMessage.style.background = '#edf2f7';
+    statusMessage.style.color = '#2d3748';
+    statusMessage.textContent = 'שומר נתונים...';
+
+    try {
+      const formData = new URLSearchParams();
+      formData.append("name", n);
+      formData.append("email", mail);
+
+      const res = await fetch(API_URL, {
+        method: "POST",
+        headers: { "Content-Type": "application/x-www-form-urlencoded" },
+        body: formData.toString()
+      });
+
+      const data = await res.json();
+
+      if (data.success && data.alreadyRegistered) {
+        statusMessage.style.background = '#fffaf0';
+        statusMessage.style.color = '#dd6b20';
+        statusMessage.textContent = 'כתובת הדוא״ל כבר רשומה במערכת.';
+      } else if (data.success) {
+        statusMessage.style.background = '#f0fff4';
+        statusMessage.style.color = '#2f855a';
+        statusMessage.textContent = '✓ תודה! ההרשמה נקלטה בהצלחה.';
+        form.reset();
+      } else {
+        statusMessage.style.background = '#fff5f5';
+        statusMessage.style.color = '#c53030';
+        statusMessage.textContent = 'שגיאה: לא ניתן לשמור את המידע.';
+      }
+
+    } catch (err) {
+      statusMessage.style.background = '#fff5f5';
+      statusMessage.style.color = '#c53030';
+      statusMessage.textContent = 'שגיאה בחיבור לשרת.';
+    }
+  });
+
 });
 </script>
 </body>
